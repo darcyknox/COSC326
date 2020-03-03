@@ -55,62 +55,83 @@ def matchDomainAndExt(str):
 def fullMatch(str):
     error_message = ""
 
+    #str.replace('_at_', '@').replace('_dot_', '.').lower()
+
     #fullValidEmailRegex = re.compile(r'^([A-Z0-9]+([-_\.]?[A-Z0-9]+)*)+(@|_at_)([A-Z0-9]+((\.)?[A-Z0-9]+)*)+(\.|_dot_)(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)$', re.IGNORECASE)
     #match = fullValidEmailRegex.match(str)
 
+    print
     if matchAt(str):
-        print str.replace('_at_', '@').replace('_dot_', '.').lower() #working
-    else:
-        '''
-        if not matchAt(str):
-            #no @ symbol
-            error_message += " <- Missing @ symbol"
-            return str + error_message
-        else:
-            #yes @ symbol
-            splitAddress = re.split('(@|_at_)', str) #split at the @ symbol
-            print splitAddress
+        #yes @ symbol
+        splitAddress = re.split('(@|_at_)', str) #split at the @ symbol
+        #print splitAddress
 
-            if len(splitAddress) > 3: #if there are more than 3 parts
-                error_message += " <- Too many @ symbols"
-                return str + error_message
+        if len(splitAddress) > 3: #if there are more than 3 parts
+            print str + " <- Too many @ symbols"
+            return
+            #return str + error_message
 
-            mailbox = splitAddress[0]
-            atSymbol = splitAddress[1]
-            domainAndExt = splitAddress[2]
+        mailbox = splitAddress[0]
+        atSymbol = splitAddress[1]
+        domainAndExt = splitAddress[2]
 
-            if not matchMailbox(mailbox):
-                error_message += " <- Invalid mailbox"
-                return str + error_message
+        if not matchMailbox(mailbox):
+            str + " <- Invalid mailbox"
+            return
+            #return str + error_message
 
-            if not matchDomainAndExt(domainAndExt): #if there is an error in the domain or extension
+        if not matchDomainAndExt(domainAndExt): #if there is an error in the domain or extension
 
-                if matchExt(domainAndExt): #if there is a valid extension
+            #if matchExt(domainAndExt): #if there is a valid extension
+            validExt = re.compile(r'(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)$', re.IGNORECASE)
+            domainAndExtSplit = re.split(validExt, domainAndExt) #split at the extension
 
-                    domainAndExtSplit = re.split('(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)', domainAndExt) #split at the extension
-                    domain = domainAndExtSplit[0] #first part is the domain
-                    ext = domainAndExtSplit[1] #second part is the extension
-                    print "Domain = " + domain
-                    print "Ext = " + ext
 
-                    if not matchDomain(domain): #if the domain doesn't match the regex
-                        if not isIPDomain(domainAndExt): #if the domain and extension is not an IP
-                            error_message += " <- Invalid domain" #the domain is invalid
-                            return str + error_message
+            #problem here
+            if len(domainAndExtSplit) < 2:
+                print "Domain and ext " + domainAndExt
+                dotSeparator = re.compile(r'[A-Z0-9]\.', re.IGNORECASE)
+                if not isIPDomain(domainAndExt) and not re.search(dotSeparator, domainAndExt):
+                    print str + " <- Missing extension"
+                    return
+            else:
+                print domainAndExtSplit
+                domain = domainAndExtSplit[0] #first part is the domain
+                ext = domainAndExtSplit[1] #second part is the extension
+                print "Domain = " + domain
+                print "Ext = " + ext
+
+                if not matchDomain(domain): #if the domain doesn't match the regex
+                    print "Split domains"
+                    print domain.split(".")
+                    if not isIPDomain(domainAndExt): #if the domain and extension is not an IP
+                        print str + " <- Invalid domain" #the domain is invalid
+                        return
+                        #return str + error_message
 
                 #nested in the invlaid domain or extension
                 #the domainAndExt isn't an IP
                 elif not isIPDomain(domainAndExt):
-                    if domainAndExt.split(".") < 2:
-                        error_message += " <- Missing extension"
-                        return str + error_message
+                    splitDomains = re.split('\.', domainAndExt)
+                    #print splitDomains
+                    if len(domainAndExt.split(".")) < 2:
+                        print "This one"
+                        print str + " <- Missing extension"
+                        return
+                        #return str + error_message
                     else:
-                        error_message += " <- Invalid extension"
-                        return str + error_message
-
+                        print str + " <- Invalid extension"
+                        return
+                        #return str + error_message
+    else:
+        #no @ symbol
+        print str + " <- Missing @ symbol"
+        return
         #return str + error_message
-        '''
-        print 'Here'
+
+
+    print str.replace('_at_', '@').replace('_dot_', '.').lower()
+    return
 
 
 def main():
@@ -130,7 +151,7 @@ def main():
     if isIPDomain("[123.123.123.123]"):
         print "IP domain"
     '''
-
+    print
     print "Valid email addresses"
     print
     fullMatch('darcy_knox@hotmail.co.nz')
@@ -150,8 +171,9 @@ def main():
     fullMatch('mailbox@l.co.uk')
     fullMatch('mail_box@domain.com')
     fullMatch('email_l@ex.l.com')
+    fullMatch('a-b-c@l.com')
 
-
+    print
     print "Invalid email addresses"
     print
 
@@ -162,62 +184,56 @@ def main():
 
 
 
-    '''
+
     fullMatch('bob@gmail..com')
 
 
     fullMatch('a-@gmail.com')
     fullMatch('BIG@@@')
     fullMatch('example.com')
-    '''
 
-    '''
+    fullMatch('email@example..example.com')
+
     fullMatch('A@b@c@domain.com')
     fullMatch('.test@domain.com')
     fullMatch('test@domain..com')
     fullMatch(' darcyknox@outlook.com')
     fullMatch('darcyknox@outlook.com ')
     fullMatch('plainaddress')
-    '''
 
-    '''
+
+
     fullMatch('#@%^%#$@#$@#.com')
     fullMatch('@example.com')
     fullMatch('Joe Smith <email@example.com>')
     fullMatch('email.example.com')
     fullMatch('email@example@example.com')
     fullMatch('.email@example.com')
-    '''
 
-    '''
+
+
     fullMatch('email.@example.com')
     fullMatch('email..email@example.com')
     fullMatch('email@example.com (Joe Smith)')
     fullMatch('email@example')
     fullMatch('email@-example.com')
 
-    '''
 
-    '''
+
+
     fullMatch('a_$b@cs.com')
     fullMatch('a___b@lol.com')
     fullMatch('a--b@cs.com')
 
-    fullMatch('a-b-c@l.com')
-    fullMatch('ab_-l@a.com')
-    '''
 
-    '''
+    fullMatch('ab_-l@a.com')
+
     fullMatch('la@l.com_')
     fullMatch('a_@l.com')
 
     fullMatch('a-$a@s.com')
 
-    '''
 
-    '''
-
-    '''
 
 if __name__ == "__main__":
     main()
