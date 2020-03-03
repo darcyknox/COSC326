@@ -89,8 +89,6 @@ console.log(matchDomainAndExt('outlook.com'));
 console.log(matchDomainAndExt('outlook..com'));
 */
 
-
-
 // FULL MATCH FUNCTION
 
 function fullMatch(str) {
@@ -115,6 +113,9 @@ function fullMatch(str) {
       error_message += " <- Missing @ symbol";
     } else { // if there is an @ symbol
 
+      if (splitted.length > 3) {
+        error_message += " <- Too many @ symbols"
+      }
       // console.log(splitted[0], splitted[1], splitted[2]);
       /*
       if (!matchDomain(splitted[2])) { // if the domain doesn't match alphanumerically
@@ -131,13 +132,14 @@ function fullMatch(str) {
         let domainAndExtSplit = domainAndExt.split(/(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)/);
         let domain = domainAndExtSplit[0];
         let ext = domainAndExtSplit[1];
-        // console.log(ext);
-        if (!matchDomain(domain)) {
+        //console.log(domain);
+        //console.log(ext);
+        if (!matchDomain(domain) && ext !== undefined) {
           if (!isNumericalDomain(domainAndExt)) {
             error_message += " <- Invalid domain";
           }
         } else {
-          if (!matchExt(str)) {
+          if (!matchExt(str) && !isNumericalDomain(domainAndExt)) {
             error_message += " <- Invalid extension";
           }
         }
@@ -192,3 +194,21 @@ console.log(fullMatch('あいうえお@example.com'));
 console.log(fullMatch('email@example.com (Joe Smith)'));
 console.log(fullMatch('email@example'));
 console.log(fullMatch('email@-example.com'));
+console.log(fullMatch('brad@lol.com'));
+console.log(fullMatch('a_$b@cs.com'));
+console.log(fullMatch('a___b@lol.com'));
+console.log(fullMatch('a--b@cs.com'));
+console.log(fullMatch('adsad.sdadsa@lol.com'));
+console.log(fullMatch('a-b-c@l.com'));
+console.log(fullMatch('ab_-l@a.com'));
+console.log(fullMatch('la@l.com_'));
+console.log(fullMatch('a_@l.com'));
+console.log(fullMatch('123_123@lolc.com'));
+console.log(fullMatch('a-$a@s.com'));
+console.log(fullMatch('a_l@[123.123.123.123]'));
+console.log(fullMatch('la.a@l.co.co.co.nz'));
+console.log(fullMatch('mailbox@a.co.nz'));
+console.log(fullMatch('mailbox@cs.co.uk'));
+console.log(fullMatch('mailbox@l.co.uk'));
+console.log(fullMatch('mail_box@domain.com'));
+console.log(fullMatch('email_l@ex.l.com'));
