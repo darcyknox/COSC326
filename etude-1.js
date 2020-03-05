@@ -55,7 +55,7 @@ console.log(matchDomain('outlook_dot_tech_dot_'));
 */
 
 function isNumericalDomain(str) {
-  let re = new RegExp(/^\[([0-9]+((\.)?[0-9]+)*)\]/ig);
+  let re = new RegExp(/^\[([0-9]+((\.)?[0-9]+)*)\]$/ig); // $ at end?
 
   return re.test(str);
 }
@@ -212,3 +212,9 @@ console.log(fullMatch('mailbox@cs.co.uk'));
 console.log(fullMatch('mailbox@l.co.uk'));
 console.log(fullMatch('mail_box@domain.com'));
 console.log(fullMatch('email_l@ex.l.com'));
+
+console.log(matchExt('darcyknox@outlook.com'))
+console.log(matchExt('darcyknox@outlook.com.au'))
+console.log(matchExt('darcyknox@outlook.co.nz'))
+console.log(matchExt('darcyknox@outlook.co.uk'))
+console.log(matchExt('darcyknox@outlook.com.nz'))

@@ -20,6 +20,18 @@ def matchAt(str):
 
     return bool(match)
 
+def findAt(str):
+
+    nonSymbol = str.rfind('_at_')
+    symbol = str.rfind('@')
+
+    if symbol > nonSymbol:
+        return symbol
+    elif (symbol < nonSymbol):
+        return nonSymbol
+    else:
+        return None
+
 
 # working
 # domains finish with a dot
@@ -54,7 +66,6 @@ def matchDomainAndExt(str):
 
     return bool(match)
 
-#currently not catching invalid extensions
 #write case for if any spaces exist
 #need a case for missing domain? when extension is valid but there's no domain?
 #I think that the domain is what comes immediately after the @ symbol
@@ -102,11 +113,27 @@ def fullMatch(str):
     else:
         print "Bad extension!!"
 
+    if matchAt(str):
+        if str[findAt(str)] == "@":
+            atIndex = findAt(str)
+        elif str[findAt(str):findAt(str) + 4] == "_at_":
+            str = str[:findAt(str)] + "@" + str[(findAt(str) + 4):]
+            atIndex = findAt(str)
 
+        print "Formatted @ symbol"
+        print str
+        print "atIndex"
+        print atIndex
+
+    # Need to make it clear how the domain is identified relative to the @ symbol
+
+    # then split at the valid @ symbol
+    # then check the mailbox and domain(s)
 
 
     if matchAt(str):
         #yes @ symbol exists
+
         splitAddress = re.split('(@|_at_)', str) #split at the @ symbol
         #print splitAddress
 
@@ -243,20 +270,10 @@ def main():
     fullMatch('at_at_at_at_dot_com')
 
     print
-    print "matchExt testing"
     print
-    matchExt(".email@example.com")
-    matchExt("email@example.co.nz")
-    matchExt("email@example.com")
-    matchExt("email@example.com.au")
-    matchExt("email@example.co.uk")
-    matchExt("email@example.co.ca")
-    matchExt("email@example.com")
-    matchExt("email@example.com.nz")
-    matchExt("email@example.com.")
-    matchExt("email@example.com.uk")
 
-
+    findAt("email@example.com")
+    findAt("darcyknox_at_outlook.com")
 
 
 if __name__ == "__main__":
