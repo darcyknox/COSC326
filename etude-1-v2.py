@@ -93,21 +93,18 @@ def fullMatch(str):
                 print str
                 str = str[:-8] + "." + str[-3:] #replace _dot_ with .
                 print str
-            print "com"
         elif (str[-6:] == "com.au"):
             if (str[-11:-6] == "_dot_"):
                 print "Uses _dot_ correctly"
                 print str
                 str = str[:-11] + "." + str[-6:] #replace _dot_ with .
                 print str
-            print "au"
         else:
             if (str[-10:-5] == "_dot_"):
                 print "Uses _dot_ correctly"
                 print str
                 str = str[:-10] + "." + str[-5:] #replace _dot_ with .
                 print str
-            print "Other valid ext"
     elif (isIPDomain(str)):
         print "Domain and ext is in IP format"
     else:
@@ -200,8 +197,9 @@ def fullMatch(str):
         return
         #return str + error_message
 
-
-    print str.replace('_at_', '@').lower()
+    # If the _dot_ couldn't be reaplaced anywhere else other thatn before the extension
+    # this would need to change (remove replace dot and use the string indexing)
+    print str.replace('_at_', '@').replace('_dot_', '.').lower()
     return
 
 
@@ -212,6 +210,7 @@ def main():
     print "VALID EMAIL ADDRESSES"
     print
 
+    fullMatch('a.b_c-d@domain.com')
     fullMatch('first_last@hotmail.co.nz')
     fullMatch('firstlast_at_outlook_dot_com')
     fullMatch('CEO@InsuroCorp.com')

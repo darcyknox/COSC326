@@ -81,29 +81,29 @@ def fullMatch(str):
                 print "Uses _dot_ correctly"
                 print str
                 str = str[:-8] + "." + str[-3:] #replace _dot_ with .
-                print str
+            print str
             print "com"
         elif (str[-6:] == "com.au"):
             if (str[-11:-6] == "_dot_"):
                 print "Uses _dot_ correctly"
                 print str
                 str = str[:-11] + "." + str[-6:] #replace _dot_ with .
-                print str
+            print str
             print "au"
         else:
             if (str[-10:-5] == "_dot_"):
                 print "Uses _dot_ correctly"
                 print str
                 str = str[:-10] + "." + str[-5:] #replace _dot_ with .
-                print str
+            print str
             print "Other valid ext"
     elif (isIPDomain(str)):
         print "Domain and ext is in IP format"
     else:
         print "Bad extension!!"
 
-
-
+    # If there's a valid domain
+    # Check from the right of the domain that the @ symbol exists
 
     if matchAt(str):
         #yes @ symbol exists
@@ -195,6 +195,7 @@ def main():
     fullMatch('adsad.sdadsa@lol.com')
     fullMatch('123_123@lolc.com')
     fullMatch('a_l@[123.123.123.123]')
+    fullMatch('a.b_c-d@domain.com')
     fullMatch('la.a@l.co.co.co.nz')
     fullMatch('mailbox@a.co.nz')
     fullMatch('mailbox@cs.co.uk')
