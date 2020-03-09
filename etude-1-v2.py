@@ -4,6 +4,7 @@ import sys
 # Evaluate when IGNORECASE should be used
 # Is it only for mailbox names, or can it be for ext/domain as well?
 
+# Get correct format for IP domains
 
 # working
 def matchMailbox(str):
@@ -92,10 +93,10 @@ def fullMatch(str):
 
     '''
     elif (str[-5:] == "co.nz" or str[-5:] == "co.uk" or str[-5:] == "co.ca" or str[-5:] == "co.us"):
-        print "Other valid ext"
+        print("Other valid ext")
     '''
 
-    print
+    print()
 
     if (containsWhitespace(str)):
         print (str + " <- Address contains whitespace")
@@ -104,26 +105,22 @@ def fullMatch(str):
     if (matchExt(str)):
         if (str[-3:] == "com"):
             if (str[-8:-3] == "_dot_"):
-                #print "Uses _dot_ correctly"
-                #print str
+                #print("Uses _dot_ correctly")
+                #print(str)
                 str = str[:-8] + "." + str[-3:] #replace _dot_ with .
-                #print str
+                #print(str)
         elif (str[-6:] == "com.au"):
             if (str[-11:-6] == "_dot_"):
-                #print "Uses _dot_ correctly"
-                #print str
+                #print("Uses _dot_ correctly")
+                #print(str)
                 str = str[:-11] + "." + str[-6:] #replace _dot_ with .
-                #print str
+                #print(str)
         else:
             if (str[-10:-5] == "_dot_"):
-                #print "Uses _dot_ correctly"
-                #print str
+                #print("Uses _dot_ correctly")
+                #print(str)
                 str = str[:-10] + "." + str[-5:] #replace _dot_ with .
-                #print str
-    elif (isIPDomain(str)):
-        print ("Domain and ext is in IP format")
-    else:
-        print ("Bad extension!!")
+                #print(str)
 
     if matchAt(str):
         if str[findAt(str)] == "@":
@@ -132,10 +129,12 @@ def fullMatch(str):
             str = str[:findAt(str)] + "@" + str[(findAt(str) + 4):]
             atIndex = findAt(str)
 
-        '''print "Formatted @ symbol"
-        print str
-        print "atIndex"
-        print atIndex'''
+        '''
+        print("Formatted @ symbol")
+        print(str)
+        print("atIndex")
+        print(atIndex)
+        '''
 
     # Need to make it clear how the domain is identified relative to the @ symbol
 
@@ -151,7 +150,7 @@ def fullMatch(str):
 
         if len(splitAddress) > 3: #if there are more than 3 parts
 
-            print (str + " <- Too many @ symbols")
+            print(str + " <- Too many @ symbols")
             return
             #return str + error_message
 
@@ -208,21 +207,88 @@ def fullMatch(str):
     #change to if not matchAt, else for better readability
     else:
         #no @ symbol
-        print (str + " <- Missing @ symbol")
+        print(str + " <- Missing @ symbol")
         return
         #return str + error_message
 
     # If the _dot_ couldn't be reaplaced anywhere else other thatn before the extension
     # this would need to change (remove replace dot and use the string indexing)
     # .replace('_at_', '@')
-    print (str.replace('_dot_', '.').lower())
+    print(str.replace('_dot_', '.').lower())
     return
 
 
 def main():
 
-    '''userIn = input()
-    fullMatch(userIn)'''
+    print()
+    print()
+    print("VALID EMAIL ADDRESSES")
+    print()
+
+    fullMatch('a.b_c-d@domain.com')
+    fullMatch('first_last@hotmail.co.nz')
+    fullMatch('firstlast_at_outlook_dot_com')
+    fullMatch('CEO@InsuroCorp.com')
+    fullMatch('gerry_at_research.techies_dot_co.uk')
+    fullMatch('cath@[139.80.91.50]')
+    fullMatch('b_at_g_dot_com')
+    fullMatch('brad@lol.com')
+    fullMatch('adsad.sdadsa@lol.com')
+    fullMatch('123_123@lolc.com')
+    fullMatch('a_l@[123.123.123.123]')
+    fullMatch('la.a@l.co.co.co.nz')
+    fullMatch('mailbox@a.co.nz')
+    fullMatch('mailbox@cs.co.uk')
+    fullMatch('mailbox@l.co.uk')
+    fullMatch('mail_box@domain.com')
+    fullMatch('email_l@ex.l.com')
+    fullMatch('a-b-c@l.com')
+
+    print()
+    print()
+    print("INVALID EMAIL ADDRESSES")
+    print()
+
+    fullMatch('name@[123.12.12.12].com')
+    fullMatch('first_last@hotmail.com.nz')
+    fullMatch('maffu@cs.otago.ac.nz')
+    fullMatch('bob@gmail..com')
+    fullMatch('a-@gmail.com')
+    fullMatch('BIG@@@')
+    fullMatch('example.com')
+    fullMatch('email@example..example.com')
+    fullMatch('A@b@c@domain.com')
+    fullMatch('.test@domain.com')
+    fullMatch('test@domain..com')
+    fullMatch(' firstlast@outlook.com')
+    fullMatch('firstlast@outlook.com ')
+    fullMatch('plainaddress')
+    fullMatch('#@%^%#$@#$@#.com')
+    fullMatch('@example.com')
+    fullMatch('Joe Smith <email@example.com>')
+    fullMatch('email.example.com')
+    fullMatch('email@example@example.com')
+    fullMatch('.email@example.com')
+    fullMatch('email.@example.com')
+    fullMatch('email..email@example.com')
+    fullMatch('email@example.com (Joe Smith)')
+    fullMatch('email@example')
+    fullMatch('email@example.')
+    fullMatch('email@-example.com')
+    fullMatch('a_$b@cs.com')
+    fullMatch('a___b@lol.com')
+    fullMatch('a--b@cs.com')
+    fullMatch('ab_-l@a.com')
+    fullMatch('la@l.com_')
+    fullMatch('a_@l.com')
+    fullMatch('a-$a@s.com')
+    fullMatch('at_at_at_at_dot_com')
+
+    print()
+    print()
+
+    findAt("email@example.com")
+    findAt("darcyknox_at_outlook.com")
 
     for line in sys.stdin:
         fullMatch(line)
