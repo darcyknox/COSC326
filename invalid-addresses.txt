@@ -1,0 +1,33 @@
+name@[123.12.12.12].com
+first_last@hotmail.com.nz
+maffu@cs.otago.ac.nz
+bob@gmail..com
+a-@gmail.com
+BIG@@@
+example.com
+email@example..example.com
+A@b@c@domain.com
+.test@domain.com
+test@domain..com
+ firstlast@outlook.com
+firstlast@outlook.com
+plainaddress
+#@%^%#$@#$@#.com
+@example.com
+Joe Smith <email@example.com>
+email.example.com
+email@example@example.com
+.email@example.com
+email.@example.com
+email..email@example.com
+email@example.com Joe Smith
+email@example
+email@example.
+email@-example.com
+a_$b@cs.com
+a___b@lol.com
+a--b@cs.com
+ab_-l@a.com
+la@l.com_
+a_@l.com
+a-$a@s.com

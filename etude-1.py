@@ -20,6 +20,18 @@ def matchAt(str):
 
     return bool(match)
 
+def findAt(str):
+
+    nonSymbol = str.rfind('_at_')
+    symbol = str.rfind('@')
+
+    if symbol > nonSymbol:
+        return symbol
+    elif (symbol < nonSymbol):
+        return nonSymbol
+    else:
+        return None
+
 
 # working
 # domains finish with a dot
@@ -30,10 +42,15 @@ def matchDomain(str):
     return bool(match)
 
 
-#dot separated numbers of no limit
-#should there be a cap on the amount of digits?
+
+'''def isIPDomain(str):
+    validIP = re.compile(r'\[([0-9]+((\.)?[0-9]+)*)\]$')
+    match = validIP.search(str)
+
+    return bool(match)'''
+
 def isIPDomain(str):
-    validIP = re.compile(r'\[([0-9]+((\.)?[0-9]+)*)\]$', re.IGNORECASE)
+    validIP = re.compile(r'\[(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]\.){2}25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]\]$')
     match = validIP.search(str)
 
     return bool(match)
@@ -54,7 +71,12 @@ def matchDomainAndExt(str):
 
     return bool(match)
 
-#currently not catching invalid extensions
+def containsWhitespace(str):
+    whitespace = re.compile(' ')
+    match = whitespace.search(str)
+
+    return bool(match)
+
 #write case for if any spaces exist
 #need a case for missing domain? when extension is valid but there's no domain?
 #I think that the domain is what comes immediately after the @ symbol
@@ -75,44 +97,57 @@ def fullMatch(str):
 
     print
 
+    if (containsWhitespace(str)):
+        print (str + " <- Address contains whitespace")
+        return
+
     if (matchExt(str)):
         if (str[-3:] == "com"):
             if (str[-8:-3] == "_dot_"):
-                print "Uses _dot_ correctly"
-                print str
+                #print "Uses _dot_ correctly"
+                #print str
                 str = str[:-8] + "." + str[-3:] #replace _dot_ with .
-            print str
-            print "com"
+                #print str
         elif (str[-6:] == "com.au"):
             if (str[-11:-6] == "_dot_"):
-                print "Uses _dot_ correctly"
-                print str
+                #print "Uses _dot_ correctly"
+                #print str
                 str = str[:-11] + "." + str[-6:] #replace _dot_ with .
-            print str
-            print "au"
+                #print str
         else:
             if (str[-10:-5] == "_dot_"):
-                print "Uses _dot_ correctly"
-                print str
+                #print "Uses _dot_ correctly"
+                #print str
                 str = str[:-10] + "." + str[-5:] #replace _dot_ with .
-            print str
-            print "Other valid ext"
-    elif (isIPDomain(str)):
-        print "Domain and ext is in IP format"
-    else:
-        print "Bad extension!!"
+                #print str
 
-    # If there's a valid domain
-    # Check from the right of the domain that the @ symbol exists
+    if matchAt(str):
+        if str[findAt(str)] == "@":
+            atIndex = findAt(str)
+        elif str[findAt(str):findAt(str) + 4] == "_at_":
+            str = str[:findAt(str)] + "@" + str[(findAt(str) + 4):]
+            atIndex = findAt(str)
+
+        '''print "Formatted @ symbol"
+        print str
+        print "atIndex"
+        print atIndex'''
+
+    # Need to make it clear how the domain is identified relative to the @ symbol
+
+    # then split at the valid @ symbol
+    # then check the mailbox and domain(s)
+
 
     if matchAt(str):
         #yes @ symbol exists
+
         splitAddress = re.split('(@|_at_)', str) #split at the @ symbol
         #print splitAddress
 
         if len(splitAddress) > 3: #if there are more than 3 parts
 
-            print str + " <- Too many @ symbols"
+            print (str + " <- Too many @ symbols")
             return
             #return str + error_message
 
@@ -125,10 +160,10 @@ def fullMatch(str):
         if not matchMailbox(mailbox):
             consecutiveSeparators = re.compile(r'(\.|-|_)(\.|-|_)')
             if bool(consecutiveSeparators.search(mailbox)):
-                print str + " <- Mailbox contains consecutive separators" #cannot contain consecutive separators (mailbox)
+                print (str + " <- Mailbox contains consecutive separators") #cannot contain consecutive separators (mailbox)
                 return
             else:
-                print str + " <- Invalid mailbox"
+                print (str + " <- Invalid mailbox")
                 return
                 #return str + error_message
 
@@ -136,7 +171,7 @@ def fullMatch(str):
             consecutiveDots = re.compile(r'(\.|_dot_)(\.|_dot_)')
             #this block might fit better in an outer condition so it catches consecutive dots in a mailbox as well
             if bool(consecutiveDots.search(domainAndExt)):
-                print str + " <- Domain contains consecutive separators" #cannot contain consecutive separators (domain)
+                print (str + " <- Domain contains consecutive separators") #cannot contain consecutive separators (domain)
                 return
 
             #if matchExt(domainAndExt): #if there is a valid extension
@@ -148,10 +183,10 @@ def fullMatch(str):
                 dotSeparator = re.compile(r'[A-Z0-9]\.[A-Z0-9]', re.IGNORECASE)
                 #says if there are no two characters separated by a dot, there must be a missing extension
                 if not isIPDomain(domainAndExt) and not re.search(dotSeparator, domainAndExt):
-                    print str + " <- Missing extension"
+                    print (str + " <- Missing extension")
                     return
                 elif not isIPDomain(domainAndExt):
-                    print str + " <- Invalid extension"
+                    print (str + " <- Invalid extension")
                     return
             else:
                 domain = domainAndExtSplit[0] #first part is the domain
@@ -159,7 +194,7 @@ def fullMatch(str):
 
                 if not matchDomain(domain): #if the domain doesn't match the regex
                     if not isIPDomain(domainAndExt): #if the domain and extension is not an IP
-                        print str + " <- Invalid domain" #the domain is invalid
+                        print (str + " <- Invalid domain") #the domain is invalid
                         return
                         #return str + error_message
 
@@ -169,96 +204,24 @@ def fullMatch(str):
     #change to if not matchAt, else for better readability
     else:
         #no @ symbol
-        print str + " <- Missing @ symbol"
+        print (str + " <- Missing @ symbol")
         return
         #return str + error_message
 
-
-    print str.replace('_at_', '@').lower()
+    # If the _dot_ couldn't be reaplaced anywhere else other thatn before the extension
+    # this would need to change (remove replace dot and use the string indexing)
+    print (str.replace('_dot_', '.').lower())
     return
 
 
 def main():
 
-    print
-    print
-    print "VALID EMAIL ADDRESSES"
-    print
+    '''userIn = input()
+    fullMatch(userIn)'''
 
-    fullMatch('first_last@hotmail.co.nz')
-    fullMatch('firstlast_at_outlook_dot_com')
-    fullMatch('CEO@InsuroCorp.com')
-    fullMatch('gerry_at_research.techies_dot_co.uk')
-    fullMatch('cath@[139.80.91.50]')
-    fullMatch('b_at_g_dot_com')
-    fullMatch('brad@lol.com')
-    fullMatch('adsad.sdadsa@lol.com')
-    fullMatch('123_123@lolc.com')
-    fullMatch('a_l@[123.123.123.123]')
-    fullMatch('a.b_c-d@domain.com')
-    fullMatch('la.a@l.co.co.co.nz')
-    fullMatch('mailbox@a.co.nz')
-    fullMatch('mailbox@cs.co.uk')
-    fullMatch('mailbox@l.co.uk')
-    fullMatch('mail_box@domain.com')
-    fullMatch('email_l@ex.l.com')
-    fullMatch('a-b-c@l.com')
-
-    print
-    print
-    print "INVALID EMAIL ADDRESSES"
-    print
-
-    fullMatch('first_last@hotmail.com.nz')
-    fullMatch('maffu@cs.otago.ac.nz')
-    fullMatch('bob@gmail..com')
-    fullMatch('a-@gmail.com')
-    fullMatch('BIG@@@')
-    fullMatch('example.com')
-    fullMatch('email@example..example.com')
-    fullMatch('A@b@c@domain.com')
-    fullMatch('.test@domain.com')
-    fullMatch('test@domain..com')
-    fullMatch(' firstlast@outlook.com')
-    fullMatch('firstlast@outlook.com ')
-    fullMatch('plainaddress')
-    fullMatch('#@%^%#$@#$@#.com')
-    fullMatch('@example.com')
-    fullMatch('Joe Smith <email@example.com>')
-    fullMatch('email.example.com')
-    fullMatch('email@example@example.com')
-    fullMatch('.email@example.com')
-    fullMatch('email.@example.com')
-    fullMatch('email..email@example.com')
-    fullMatch('email@example.com (Joe Smith)')
-    fullMatch('email@example')
-    fullMatch('email@example.')
-    fullMatch('email@-example.com')
-    fullMatch('a_$b@cs.com')
-    fullMatch('a___b@lol.com')
-    fullMatch('a--b@cs.com')
-    fullMatch('ab_-l@a.com')
-    fullMatch('la@l.com_')
-    fullMatch('a_@l.com')
-    fullMatch('a-$a@s.com')
-    fullMatch('at_at_at_at_dot_com')
-
-    print
-    print "matchExt testing"
-    print
-    matchExt(".email@example.com")
-    matchExt("email@example.co.nz")
-    matchExt("email@example.com")
-    matchExt("email@example.com.au")
-    matchExt("email@example.co.uk")
-    matchExt("email@example.co.ca")
-    matchExt("email@example.com")
-    matchExt("email@example.com.nz")
-    matchExt("email@example.com.")
-    matchExt("email@example.com.uk")
-
-
-
+    for line in sys.stdin:
+        line = line.strip()
+        fullMatch(line)
 
 if __name__ == "__main__":
     main()
