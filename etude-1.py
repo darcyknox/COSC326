@@ -1,20 +1,29 @@
 import re
 import sys
 
+# Etude-1 Email Addresses
+# Author: Darcy Knox
+# Date: March 2020
+
+# The program takes string input(s) from the user, and determines whether the
+# string is a valid email address according to the specifications outlined in
+# the Etude 1 Problem Description
+
+# Function to match the mailbox part of the address
 def matchMailbox(str):
     validMailboxPattern = re.compile(r'^[A-Z0-9]+([-_\.]?[A-Z0-9]+)*$', re.IGNORECASE)
     match = validMailboxPattern.match(str)
 
     return bool(match)
 
-
+# Function to find an @ symbol in a string
 def matchAt(str):
     validAt = re.compile(r'(@|_at_)')
     match = validAt.search(str)
 
     return bool(match)
 
-
+# Function to find the right-most @ symbol in a string
 def findAtPos(str):
 
     nonSymbol = str.rfind('_at_')
@@ -27,7 +36,7 @@ def findAtPos(str):
     else:
         return None
 
-
+# Function to match the domain part of the address
 def matchDomain(str):
     validDomain = re.compile(r'^([A-Z0-9]+((\.)?[A-Z0-9]+)*)+(\.|_dot_)$', re.IGNORECASE)
     match = validDomain.match(str)
@@ -35,6 +44,7 @@ def matchDomain(str):
     return bool(match)
 
 
+# Function to search for a correctly formatted IP address in a string
 def isIPDomain(str):
     validIP = re.compile(r'\[(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]\.){2}25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9]\]$')
     match = validIP.search(str)
@@ -42,6 +52,7 @@ def isIPDomain(str):
     return bool(match)
 
 
+# Function to find a valid extension at the end of a string
 def matchExt(str):
     validExt = re.compile(r'(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)$', re.IGNORECASE)
     match = validExt.search(str)
@@ -49,6 +60,7 @@ def matchExt(str):
     return bool(match)
 
 
+# Function to match a fully valid domain and extension
 def matchDomainAndExt(str):
     validDomainAndExt = re.compile(r'^([A-Z0-9]+((\.)?[A-Z0-9]+)*)+(\.|_dot_)(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)$', re.IGNORECASE)
     match = validDomainAndExt.match(str)
@@ -56,6 +68,7 @@ def matchDomainAndExt(str):
     return bool(match)
 
 
+# Function to check for any whitespace within a string
 def containsWhitespace(str):
     whitespace = re.compile(' ')
     match = whitespace.search(str)
@@ -67,6 +80,8 @@ def containsWhitespace(str):
 #I think that the domain is what comes immediately after the @ symbol
 # rsplit 1 time for the @ symbol
 
+
+# Function to check for any invalidities
 def fullMatch(str):
     error_message = ""
 
