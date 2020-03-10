@@ -215,9 +215,9 @@ def fullMatch(str):
         return
         #return str + error_message
 
-    # If the _dot_ couldn't be reaplaced anywhere else other thatn before the extension
+    # If the _dot_ couldn't be replaced anywhere else other than before the extension
     # this would need to change (remove replace dot and use the string indexing)
-    # .replace('_at_', '@')
+    # _dot_ can be anywhere that . can be, but there can only be one @
     print(str.replace('_dot_', '.').lower())
     return
 

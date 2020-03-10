@@ -16,14 +16,12 @@ def matchMailbox(str):
 
     return bool(match)
 
-
 # Function to find an @ symbol in a string
 def matchAt(str):
     validAt = re.compile(r'(@|_at_)')
     match = validAt.search(str)
 
     return bool(match)
-
 
 # Function to find the right-most @ symbol in a string
 def findAtPos(str):
@@ -37,7 +35,6 @@ def findAtPos(str):
         return nonSymbol
     else:
         return None
-
 
 # Function to match the domain part of the address
 def matchDomain(str):
@@ -54,14 +51,12 @@ def hasIPDomain(str):
 
     return bool(match)
 
-
 # Function to match a valid IP address
 def matchIPDomain(str):
     validIP = re.compile(r'^\[((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\]$')
     match = validIP.match(str)
 
     return bool(match)
-
 
 # Function to find a valid extension at the end of a string
 def matchExt(str):
@@ -185,7 +180,9 @@ def fullMatch(str):
                         print (str + " <- Invalid domain") # the domain is invalid
                         return
 
-    # Valid email
+    # If the _dot_ couldn't be replaced anywhere else other than before the extension
+    # this would need to change (remove replace dot and use the string indexing)
+    # _dot_ can be anywhere that . can be, but there can only be one @
     print (str.replace('_dot_', '.').lower()) #replace the _dot_s
     return
 
