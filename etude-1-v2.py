@@ -4,6 +4,10 @@ import sys
 # Evaluate when IGNORECASE should be used
 # Is it only for mailbox names, or can it be for ext/domain as well?
 
+#fullValidEmailRegex = re.compile(r'^([A-Z0-9]+([-_\.]?[A-Z0-9]+)*)+(@|_at_)([A-Z0-9]+((\.)?[A-Z0-9]+)*)+(\.|_dot_)(co\.nz|com\.au|co\.uk|com|co\.us|co\.ca)$', re.IGNORECASE)
+#match = fullValidEmailRegex.match(str)
+#str.replace('_at_', '@').replace('_dot_', '.').lower()
+
 # Get correct format for IP domains
 
 # working
