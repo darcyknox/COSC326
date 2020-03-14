@@ -1,12 +1,5 @@
 import sys
-
-
-def add(x, y):
-    return x + y
-
-
-def multiply(x, y):
-    return x * y
+import Line
 
 
 def calculate(arr, target):
@@ -21,13 +14,6 @@ def calculate(arr, target):
                 print (str(arr) + " " + ops[i].__name__ + " " + ops[j].__name__)
                 return
 
-def leftCalc(i, max_depth, currentVal, currentExpression, target, arr):
-
-    if(i == max_depth || currentVal == target):
-        return currentVal
-    else:
-        
-
 
 
 
@@ -41,6 +27,10 @@ def main():
 
     calculate([1, 2, 3], 5)
     calculate([1, 2, 3], 9)
+
+    line1 = Line([1, 2, 3], 5)
+
+    #line1.left(1, nums[i])
 
 
 
