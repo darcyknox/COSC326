@@ -10,6 +10,7 @@ class Line:
         self.target = target
         self.found = False
         self.opstring = ""
+        self.oparray = []
 
     def add(self, x, y):
         return x + y
@@ -23,36 +24,43 @@ class Line:
 
 
 
-    def left(self, i, currentValue):
+    def leftToRight(self, i, currentValue, ops):
         #print ("curr: " + str(currentValue), " i: " + str(i), "target: " + str(self.target))
-
 
 
         if (currentValue > self.target):
             #print("Target not found (values exceed target): " + str(self.target))
             #print (self.found)
+            #self.oparray.pop()
             return
-        elif (i == self.depth):
+        elif (i == self.depth) and not self.found:
             if (currentValue == self.target):
                 #print ("Found target: " + str(currentValue))
                 self.found = True
-
                 #print (self.found)
+                #print ("final", self.oparray)
+                self.opstring = ops
                 return
-            #print("Target not found (max depth reached): " + str(self.target))
-            return
+            else:
+                #self.oparray.pop()
+                #print("Target not found (max depth reached): " + str(self.target))
+                return
         elif self.found:
             return
         else:
 
-            self.opstring = self.opstring + "+" + str(self.nums[i])
-
+            plus = ops + "+"
+            times = ops + "*"
+            #op = op + "+" + str(self.nums[i])
             #print ("current value: " + str(currentValue))
-            self.left(i + 1, self.add(currentValue, self.nums[i]))
+            self.leftToRight(i + 1, self.add(currentValue, self.nums[i]), plus)
 
-            self.opstring = self.opstring + "*" + str(self.nums[i])
+
+            #op = op + "*" + str(self.nums[i])
             #print ("current value: " + str(currentValue))
-            self.left(i + 1, self.multiply(currentValue, self.nums[i]))
+            self.leftToRight(i + 1, self.multiply(currentValue, self.nums[i]), times)
+
+
 
 
 
@@ -70,11 +78,11 @@ def main():
     # - the target as the second argument
 
     # if the order is L:
-        # apply the left function on the line instance
+        # apply the leftToRight function on the line instance
     # elif the order is N:
         # apply the normal function on the line instance
 
-    count = 0
+    count = 0 # tracks whether a line is even or odd
     numSequence = []
 
     for line in sys.stdin:
@@ -88,23 +96,31 @@ def main():
             target = int(constraints[0]) #target is the first input on the second line and is in integer form
             # orderOfOperations = constraints[1]
             myLine = Line(numSequence, target) #order...
-
             '''print("Depth:", myLine.depth)
             print("Found:", myLine.found)
             print("nums:", myLine.nums)
             print("Target:", myLine.target)'''
 
-            myLine.left(1, 1)
+            myLine.leftToRight(1, numSequence[0], "")
 
             if myLine.found:
                 print("Target found", myLine.nums, myLine.target)
-                print(myLine.opstring)
+                #print(myLine.opstring)
+                #print(myLine.oparray)
+                #print(myLine.opstring)
+                result = str(numSequence[0])
+                for i in range(len(myLine.opstring)):
+                    result = result + " " + myLine.opstring[i] + " " + str(myLine.nums[i+1])
+                result = result + " = " + str(target)
+                print(result)
             else:
                 print("Impossible", myLine.nums, myLine.target)
 
-            numSequence = []
+            print("\n")
 
-        count +=1
+            numSequence = [] # reset the array for the next input
+
+        count +=1 # increment for even/odd lines
 
 
 
