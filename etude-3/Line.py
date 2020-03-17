@@ -9,6 +9,7 @@ class Line:
         self.depth = len(nums)
         self.target = target
         self.found = False
+        self.opstring = ""
 
     def add(self, x, y):
         return x + y
@@ -25,6 +26,8 @@ class Line:
     def left(self, i, currentValue):
         #print ("curr: " + str(currentValue), " i: " + str(i), "target: " + str(self.target))
 
+
+
         if (currentValue > self.target):
             #print("Target not found (values exceed target): " + str(self.target))
             #print (self.found)
@@ -33,6 +36,7 @@ class Line:
             if (currentValue == self.target):
                 #print ("Found target: " + str(currentValue))
                 self.found = True
+
                 #print (self.found)
                 return
             #print("Target not found (max depth reached): " + str(self.target))
@@ -40,8 +44,13 @@ class Line:
         elif self.found:
             return
         else:
+
+            self.opstring = self.opstring + "+" + str(self.nums[i])
+
             #print ("current value: " + str(currentValue))
             self.left(i + 1, self.add(currentValue, self.nums[i]))
+
+            self.opstring = self.opstring + "*" + str(self.nums[i])
             #print ("current value: " + str(currentValue))
             self.left(i + 1, self.multiply(currentValue, self.nums[i]))
 
@@ -89,6 +98,7 @@ def main():
 
             if myLine.found:
                 print("Target found", myLine.nums, myLine.target)
+                print(myLine.opstring)
             else:
                 print("Impossible", myLine.nums, myLine.target)
 
