@@ -95,6 +95,7 @@ def fullMatch(str):
         return
 
     # if a valid extension is used
+    # replace the _dot_ preceding the extension first
     if matchExt(str):
         # If extension is preceded with _dot_ it is changed to a . immediately
         # Position of dot may be different depending on the extension
@@ -108,6 +109,9 @@ def fullMatch(str):
             if (str[-10:-5] == "_dot_"):
                 str = str[:-10] + "." + str[-5:] #replace _dot_ with .
 
+    #str = str.replace('_dot_', '.')
+
+
     # if there's no @ symbol
     if not matchAt(str):
         print (str + " <- Missing @ symbol")
@@ -119,7 +123,10 @@ def fullMatch(str):
         if str[findAtPos(str):findAtPos(str) + 4] == "_at_":
             str = str[:findAtPos(str)] + "@" + str[(findAtPos(str) + 4):]
 
+        str = str.replace('_dot_', '.')
+
         splitAddress = re.split('(@)', str) # split at the @ symbol
+
 
         # if there are more than 3 parts to the address
         if len(splitAddress) > 3:
