@@ -5,12 +5,12 @@ class Line:
 
     def __init__(self, nums, target):
         super(Line, self).__init__()
-        self.nums = nums
-        self.depth = len(nums)
-        self.target = target
-        self.found = False
-        self.opstring = ""
-        self.oparray = []
+        self.nums = nums # The array of input numbers
+        self.depth = len(nums) # Depth of the (abstract) binary tree, or n.
+        self.target = target # The target value.
+        self.found = False # Boolean for if the target value is found.
+        self.finalString = "" # The working expression, or 'Impossible.'
+        self.opsPermutations = [] # A 2D array of every possible sequence of operations.
 
     def add(self, x, y):
         return x + y
@@ -22,16 +22,43 @@ class Line:
 
 # add the sign, and the nums[i]
 
+    def normalOrder(self, i, ops):
+
+        if (i == self.depth):
+
+            tempArray = []
+
+            for j in range(len(ops)):
+                tempArray.append(ops[j])
+            self.opsPermutations.append(tempArray)
+
+            expressionString = str(self.nums[0])
+
+            for j in range(self.depth - 1):
+                expressionString = expressionString + " " + tempArray[j] + " "
+                expressionString = expressionString + str(self.nums[j + 1])
+
+            result = eval(expressionString)
+
+            if result == self.target:
+                self.found = True
+                self.finalString = expressionString
+                return
+            elif (not self.found) and len(self.opsPermutations) >= 2**(self.depth - 1):
+                self.finalString = "Impossible"
+                return
+        else:
+            self.normalOrder(i + 1, ops + "+")
+            self.normalOrder(i + 1, ops + "*")
+
 
 
     def leftToRight(self, i, currentValue, ops):
         #print ("curr: " + str(currentValue), " i: " + str(i), "target: " + str(self.target))
 
-
         if (currentValue > self.target):
             #print("Target not found (values exceed target): " + str(self.target))
-            #print (self.found)
-            #self.oparray.pop()
+            #print(self.found)
             return
         elif (i == self.depth) and not self.found:
             if (currentValue == self.target):
@@ -39,7 +66,7 @@ class Line:
                 self.found = True
                 #print (self.found)
                 #print ("final", self.oparray)
-                self.opstring = ops
+                self.finalString = ops
                 return
             else:
                 #self.oparray.pop()
@@ -51,17 +78,14 @@ class Line:
 
             plus = ops + "+"
             times = ops + "*"
+
             #op = op + "+" + str(self.nums[i])
             #print ("current value: " + str(currentValue))
             self.leftToRight(i + 1, self.add(currentValue, self.nums[i]), plus)
 
-
             #op = op + "*" + str(self.nums[i])
             #print ("current value: " + str(currentValue))
             self.leftToRight(i + 1, self.multiply(currentValue, self.nums[i]), times)
-
-
-
 
 
 
@@ -94,6 +118,7 @@ def main():
         else:
             constraints = line.strip().split(" ")
             target = int(constraints[0]) #target is the first input on the second line and is in integer form
+            order = constraints[1].capitalize()
             # orderOfOperations = constraints[1]
             myLine = Line(numSequence, target) #order...
             '''print("Depth:", myLine.depth)
@@ -101,22 +126,30 @@ def main():
             print("nums:", myLine.nums)
             print("Target:", myLine.target)'''
 
-            myLine.leftToRight(1, numSequence[0], "")
+            if (order != 'L' and order != 'N'):
+                print('Invalid input for order')
+                print(order)
+                return
+            elif (order == 'L'):
+                myLine.leftToRight(1, numSequence[0], "")
 
-            if myLine.found:
-                print("Target found", myLine.nums, myLine.target)
-                #print(myLine.opstring)
-                #print(myLine.oparray)
-                #print(myLine.opstring)
-                result = str(numSequence[0])
-                for i in range(len(myLine.opstring)):
-                    result = result + " " + myLine.opstring[i] + " " + str(myLine.nums[i+1])
-                result = result + " = " + str(target)
-                print(result)
+                if myLine.found:
+
+                    #print(myLine.finalString)
+                    #print(myLine.finalString)
+                    result = str(numSequence[0])
+                    for i in range(len(myLine.finalString)):
+                        result = result + " " + myLine.finalString[i] + " " + str(myLine.nums[i+1])
+                    #result = result + " = " + str(target)
+                    print("L", myLine.target, result)
+                else:
+                    #print(myLine.nums)
+                    print("L", myLine.target, "Impossible")
+
             else:
-                print("Impossible", myLine.nums, myLine.target)
+                myLine.normalOrder(1, "")
 
-            print("\n")
+                print("N", myLine.target, myLine.finalString)
 
             numSequence = [] # reset the array for the next input
 
