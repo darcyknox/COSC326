@@ -19,6 +19,7 @@ class Line:
     def multiply(self, x, y):
         return x * y
 
+# Both order functions use the abstraction of a binary tree.
 
 # add the sign, and the nums[i]
 
@@ -113,11 +114,22 @@ def main():
 
         if count % 2 == 0:
             for numberString in line.strip().split(" "):
+                # Exception: Line of numbers contains at least one non-integer
+                if not numberString.isdigit():
+                    print("Error: First line of input must contain only digits separated by spaces")
+                    return
                 numSequence.append(int(numberString)) #numSequence is now the list of ints to be parsed
 
         else:
             constraints = line.strip().split(" ")
+
+            # Exception: Target value is not an integer
+            if not constraints[0].isdigit():
+                print("Error: First input of second line must be a target value in the form of an integer.")
+                return
+
             target = int(constraints[0]) #target is the first input on the second line and is in integer form
+
             order = constraints[1].capitalize()
             # orderOfOperations = constraints[1]
             myLine = Line(numSequence, target) #order...
@@ -126,6 +138,7 @@ def main():
             print("nums:", myLine.nums)
             print("Target:", myLine.target)'''
 
+            # Exception: Order is not L or N
             if (order != 'L' and order != 'N'):
                 print('Invalid input for order')
                 print(order)
