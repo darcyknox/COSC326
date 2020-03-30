@@ -1,4 +1,6 @@
 import sys
+import time
+import traceback
 
 class Arithmetic:
 
@@ -8,9 +10,10 @@ class Arithmetic:
         self.depth = len(nums) # Depth of the (abstract) binary tree, or n.
         self.target = target # The target value.
         self.found = False # Boolean for if the target value is found.
-        self.finalString = "" # The working expression, or 'Impossible.'
+        self.finalString = "Impossible - currentValues exceed target" # The working expression, or 'Impossible.'
         self.opsPermutations = [] # A 2D array of every possible sequence of operations.
         self.order = order # Left to right, or Normal order of operations
+        self.operations = "+*"
 
     # Addition utility function
     def add(self, x, y):
@@ -21,7 +24,7 @@ class Arithmetic:
         return x * y
 
     # calculate assumes an binary tree abstraction for evaluating permutations of operation sequences.
-    def calculate(self, i, ops, currentValue = None):
+    def calculate(self, i, ops, currentValue):
 
         if self.found:
             return
@@ -55,13 +58,112 @@ class Arithmetic:
             elif (not self.found) and len(self.opsPermutations) >= 2**(self.depth - 1):
                 self.finalString = "Impossible"
                 return
+        elif currentValue >= self.target:
+            return
         else:
-            if self.order == 'L':
-                self.calculate(i + 1, ops + "+", self.add(currentValue, self.nums[i]))
-                self.calculate(i + 1, ops + "*", self.multiply(currentValue, self.nums[i]))
+            self.calculate(i + 1, ops + "+", self.add(currentValue, self.nums[i]))
+            self.calculate(i + 1, ops + "*", self.multiply(currentValue, self.nums[i]))
+
+
+    def calcIterative(self):
+
+
+        currentValue = str(self.nums[0])
+        i = 1
+
+        while i < self.depth:
+            for k in range(2):
+                for j in self.operations:
+                    currentValue = currentValue + j + str(self.nums[i])
+                    print("Current value: ", currentValue)
+                    result = eval(currentValue)
+                    print(result)
+            i = i + 1
+
+
+        #while not self.found:
+
+    def dfsLeft(self):
+
+        possible = []
+        i = 0
+        toVisit = [self.nums[i]]
+        n = 1
+
+        while len(toVisit) > 0 and not self.found:
+
+            perms = 2**(n-1)
+            if i < self.depth - 1:
+                #print("i = ", i)
+                for k in range(perms):
+                    try:
+                        currentNode = toVisit.pop()
+                    except IndexError:
+                        print('Nothing to pop')
+                        break
+                    #print("Popped:", currentNode)
+                    for j in self.operations:
+                        if j == '+':
+                            left = str(currentNode) + j + str(self.nums[i + 1])
+                            leftValue = eval(left)
+                            #print("Left", left,  "=", leftValue)
+                            #toVisit.append(leftValue)
+                            if leftValue <= self.target:
+                                if i + 1 == self.depth - 1 and leftValue == self.target:
+                                    print("TARGET FOUND", leftValue)
+                                    self.found = True
+                                    break
+                                #print("Left value", leftValue, "Add to stack")
+                                toVisit.insert(0, leftValue)
+                        elif j == '*':
+                            right = str(currentNode) + j + str(self.nums[i + 1])
+                            rightValue = eval(right)
+                            #print("Right", right,  "=", rightValue)
+                            #toVisit.append(rightValue)
+                            if rightValue <= self.target:
+                                if i + 1 == self.depth - 1 and rightValue == self.target:
+                                    print("TARGET FOUND", rightValue)
+                                    self.found = True
+                                    break
+                                #print("Right value", rightValue, "Add to stack")
+                                toVisit.insert(0, rightValue)
+
+                    if self.found:
+                        break
+
+                        #currentValue = eval(str(currentValue) + j + str(self.nums[i + 1]))
+                        #toVisit.insert(0, j + str(self.nums[i + 1]))
+                    #print("Stack:", toVisit)
+                i = i + 1
+                n = n + 1
             else:
-                self.calculate(i + 1, ops + "+")
-                self.calculate(i + 1, ops + "*")
+                #change this to just find the target using .index()
+                '''
+                try:
+                    toVisit.index(self.target)
+                    print("Found target")
+                    break
+                except ValueError:
+                    print("Not found")
+                    break
+                '''
+
+                try:
+                    currentNode = toVisit.pop()
+                except IndexError:
+                    print('Nothing to pop: Impossible')
+                    break
+                #print("Popped:", currentNode)
+                possible.append(currentNode)
+
+        if possible:
+            print("Possible: ", possible)
+            for x in possible:
+                if x == self.target:
+                    self.found = True
+                    print("Found target: ", x)
+                    break
+
 
 
 def main():
@@ -96,8 +198,18 @@ def main():
                 print(order)
                 return
             else:
-                myArithmetic.calculate(1, "", numSequence[0])
-                print(order, myArithmetic.target, myArithmetic.finalString)
+                #start = time.time()
+                #myArithmetic.calculate(1, "", numSequence[0])
+                #end = time.time()
+                #print(order, myArithmetic.target, myArithmetic.finalString)
+                #print("Iterative: ", myArithmetic.calcIterative())
+                print(myArithmetic.nums, myArithmetic.target)
+                start = time.time()
+                myArithmetic.dfsLeft()
+                end = time.time()
+                print("Time elapsed", (end - start))
+                print()
+
 
             numSequence = [] # reset the array for the next input
 
