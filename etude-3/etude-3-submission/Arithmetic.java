@@ -47,7 +47,6 @@ public class Arithmetic {
       //System.out.println("First if");
       return;
     } else if (i == this.depth) {
-      //System.out.println("At max depth");
       String possiblePermutation = "";
 
       for (int j = 0; j < ops.length(); j++) {
@@ -55,43 +54,78 @@ public class Arithmetic {
       }
       this.opsPermutations.add(possiblePermutation);
 
-      String expressionString = Integer.toString(this.nums[0]);
-
-      for (int j = 0; j < this.depth - 1; j++) {
-        expressionString += " " + possiblePermutation.charAt(j) + " ";
-        expressionString += Integer.toString(this.nums[j + 1]);
-      }
-
-      int result = 0;
-
-      if (this.order == 'L') {
-        result = currentValue;
-      }
-
-      if (result == this.target) {
+      // L SUCCESS
+      if (this.order == 'L' & currentValue == this.target) {
         System.out.println("Found target");
         this.found = true;
+
+        String expressionString = Integer.toString(this.nums[0]);
+        for (int j = 0; j < this.depth - 1; j++) {
+          expressionString += " " + possiblePermutation.charAt(j) + " ";
+          expressionString += Integer.toString(this.nums[j + 1]);
+        }
+
         this.finalString = expressionString;
         return;
+
+      } else if (this.order == 'N') {
+
+        String expressionString = Integer.toString(this.nums[0]);
+        for (int j = 0; j < this.depth - 1; j++) {
+          expressionString += " " + possiblePermutation.charAt(j) + " ";
+          expressionString += Integer.toString(this.nums[j + 1]);
+        }
+        // N SUCCESS
+        if (eval(expressionString) == this.target) {
+          System.out.println("Found target");
+          this.found = true;
+          this.finalString = expressionString;
+          return;
+        }
+
       } else if (!(this.found) & this.opsPermutations.size() >= Math.pow(2, this.depth - 1)) {
+        // Only works on 'L'
         this.finalString = "Impossible";
         return;
       }
-
-    } else if (currentValue >= this.target) {
-      return;
     } else {
       this.calculate(i + 1, ops + "+", add(currentValue, this.nums[i]));
       this.calculate(i + 1, ops + "*", multiply(currentValue, this.nums[i]));
     }
-
-
   }
 
-  private static int eval(String evalString) {
-    String[] result = evalString.split("+*");
-    System.out.println(result);
-    return 0;
+
+  private String createExpressionString(String permutation) {
+    String expressionString = Integer.toString(this.nums[0]);
+    for (int j = 0; j < this.depth - 1; j++) {
+      expressionString += " " + possiblePermutation.charAt(j) + " ";
+      expressionString += Integer.toString(this.nums[j + 1]);
+    }
+    return expressionString;
+  }
+
+  private int eval(String expString) {
+    // multipy the numbers that have a * between them and add them to and array.
+    // then add everything else to the array and get the sum.
+    String removeSpaces = expString.replaceAll("\\s+", "");
+    String[] expArr = removeSpaces.split("");
+    int result = 0;
+    int product;
+    int j;
+    //
+    for (j = 0; j < expArr.length; j++) {
+      if (expArr[j].matches("\\*")) {
+        product = multiply(Integer.parseInt(expArr[j - 1]), Integer.parseInt(expArr[j + 1]));
+        expArr[j - 1] = expArr[j] = "";
+        expArr[j + 1] = Integer.toString(product);
+      }
+    }
+    for (j = 0; j < expArr.length; j++) {
+      if (expArr[j].matches("\\d+")) {
+        result += Integer.parseInt(expArr[j]);
+      }
+    }
+    return result;
   }
 
   public static void main(String[] args) {
@@ -132,11 +166,13 @@ public class Arithmetic {
         Arithmetic test = new Arithmetic(numSequence, target, order);
         test.found = false; // understand static, public, private etc.
         System.out.println("Target: " + test.getTarget());
-        final double startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         test.calculate(1, "", numSequence[0]);
-        final double endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
         System.out.println(test.finalString);
-        System.out.println("Execution time: " + (endTime - startTime));
+        System.out.println("Execution time: " + (endTime - startTime) * Math.pow(10, -9));
+        test.eval("1+2*3*4*5+6");
+        test.eval("1 + 2 * 3 * 4 * 5 + 6");
       }
       count++;
     }

@@ -25,7 +25,7 @@ class Arithmetic:
 
         if self.found:
             return
-            # If the function is in a max depth state (is at the end of the expression)
+        # If the function is in a max depth state (is at the end of the expression)
         elif (i == self.depth):
 
             possiblePermutation = []
@@ -52,7 +52,7 @@ class Arithmetic:
                 self.finalString = expressionString
                 return
             # target is not achieved and all permutations have been evaluated
-            elif (not self.found) and len(self.opsPermutations) >= 2**(self.depth - 1):
+            elif (not self.found) and  len(self.opsPermutations) >= 2**(self.depth - 1):
                 self.finalString = "Impossible"
                 return
         else:
