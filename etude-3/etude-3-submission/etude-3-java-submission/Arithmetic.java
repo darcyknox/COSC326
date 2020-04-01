@@ -54,7 +54,7 @@ public class Arithmetic {
   /** Treats the expression as the sum of many chunks of products.
     * @param sum is the sum of the products before the current number.
     * - if the operation is multiplication, the sum stays the same as the chunk we are operating
-    *   upon does not have a final value that we can add to the sum.
+    *   upon, as it does not yet have a final value that we can add to the sum.
     * - a chunk is everything in-between addition signs '+'
     * @param last tracks the value of the current chunk.
     */
@@ -147,7 +147,7 @@ public class Arithmetic {
         } else if (order == 'N') {
           test.calculateNormal(1, 0, numSequence[0], numSequence[0], Integer.toString(numSequence[0]));
         }
-        
+
         //final long end = System.nanoTime();
         System.out.println(test.finalString);
         //System.out.println((end - start)/ Math.pow(10, 9));
