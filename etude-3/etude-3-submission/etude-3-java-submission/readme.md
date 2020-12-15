@@ -1,18 +1,20 @@
-Author: Darcy Knox
-COSC326 S1 2020
-Etude 3
-Arithmetic
+Author: Darcy Knox  
+COSC326 S1 2020  
+Etude 3  
+Arithmetic  
 
-Written in Java
+This program takes in 2 lines of input. The first line being a set of numbers, the second line being a target number, and a letter N or L which determines the order of operations to apply (normal/bedmas, or left to right). The program determines whether or not the list of numbers, in the given order, can result in the target value by using only addition or multiplication in any permutation upon the numbers. If it is possible, the output will return the order letter, the target number, and the expression that evaluates to the target number.
 
-Compile using the command:
-javac Arithmetic.java
+Written in Java  
 
-To input from a file, use the command:
-java Arithmetic < filename.txt
+Compile using the command:  
+javac Arithmetic.java  
 
-To input from the command line, use the command:
-java Arithmetic
+To input from a file, use the command:  
+java Arithmetic < filename.txt  
+
+To input from the command line, use the command:  
+java Arithmetic  
 
 
 Test cases used:
