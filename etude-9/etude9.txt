@@ -1,0 +1,492 @@
+INTERNET_DRAFT                                         H. Baird, Editor
+Rock Paper Scissors                                 C. Stephani, Editor
+COSC326 Group                                           D. Knox, Editor
+Category: Informational                           L. Hoogenraad, Editor
+Expires: March 2021                                         07 May 2020
+
+
+		         Rock Paper Scissors (RPS)
+
+
+Status of this Memo
+
+   By submitting this Internet-Draft, I certify that any applicable
+   patent or other IPR claims of which I am aware have been disclosed,
+   or will be disclosed, and any of which I become aware will be
+   disclosed, in accordance with RFC 3668.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six
+   months and may be updated, replaced, or obsoleted by other documents
+   at any time.  It is inappropriate to use Internet-Drafts as
+   reference material or to cite them other than a "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/1id-abstracts.html
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html
+
+IPR Statement
+
+   By submitting this Internet-Draft, I certify that any applicable
+   patent or other IPR claims of which I am aware have been disclosed,
+   or will be disclosed, and any of which I become aware will be
+   disclosed, in accordance with RFC 3668.
+
+Abstract
+
+   This document outlines the implementation of a two player Rock Paper
+   Scissors game in a semi-decentralized manner.  Matchmaking is
+   determined through a centralized server, but gameplay communication
+   is primarily peer-to-peer.  Explanations include the handling of
+   issues in relation to networks and players dishonestly to ensure
+   fairness of both players involved.  The document also highlights
+   factors such as encryption and timestamping of player answers for
+   the robustness and security of delivery.
+
+
+
+
+RFC Editor                    Informational                    [Page 1]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+Table of Contents
+
+   1. Introduction .................................................. 2
+   2.  Proposal ..................................................... 2
+      2.1 Implementation ............................................ 2
+      2.2 Button Press .............................................. 2
+      2.3 Game Rules ................................................ 3
+      2.4 Handshaking ............................................... 3
+      2.5 Digital Certificate ....................................... 3
+   3. Handling Dishonest Players .................................... 4
+      3.1 Reporting Function ........................................ 4
+   4. Network Issues ................................................ 4
+      4.1 Disconnections ............................................ 5
+      4.2 Reason for Disconnection Result ........................... 5
+      4.3 Reliance of Internet Speed ................................ 5
+   5. Security and Authentication ................................... 6
+      5.1 Encryption ................................................ 6
+      5.2 Hashing ................................................... 6
+      5.3 Timestamping .............................................. 6
+   6. Security Considerations ....................................... 7
+   7. Acknowledgements .............................................. 7
+   Author’s Addresses ............................................... 8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 2]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+1. Introduction
+
+   Our development team seeks to implement a paper-scissors-rock game
+   over the internet.  Players will connect to a central server that is
+   responsible for matchmaking. From there, the server will connect two
+   players and they will be able to play against each other.  The
+   player who reaches three wins first will be determined the winner.
+
+2. Proposal
+
+   This section summarizes our general implementation process and
+   the meaning of gameplay.
+
+   2.1 Implementation
+
+      When matchmaking is completed by the server, a public-private key
+      pair is generated for each player and a digital certificate is
+      created. The opponent's digital certificate that holds a public
+      key is shared and temporarily stored by the other player for the
+      session. All communication is player-to-player after the server
+      has matched the players together. Players simply have a 5-second
+      countdown to make a move. Once a move has been made, this is sent
+      to the opponent immediately, and the player cannot change their
+      move after this. This makes it impossible for players to predict
+      their opponents move, even if a player receives an answer quicker
+      than the other opponent.
+
+   2.2 Button Press
+
+      Once the game has begun the player will be told that he/she can
+      choose their moves by pressing either (R), (P), or (S). Each of
+      these will be linked to one of the options where R is rock, P is
+      paper, and S is scissors.  As one of these keys are pressed the
+      game will then store that keypress as the players move for that
+      round. If a key is pressed that isn’t one of these keys the
+      validator will not accept the keypress and prompt the user with a
+      message.
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 3]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+   2.3 Game Rules
+
+      The players can choose one of three moves: rock, paper, or
+      scissors. A player wins against the match opponent when winning
+      three rounds overall. To win a round a player must enter the move
+      which beats the opponents move. For example: rock beats scissors,
+      scissors beats paper, and paper beats rock. If the two players
+      make the same move that round will be counted as a draw and
+      neither player will get a point towards their tally of three.
+
+   2.4 Handshaking
+
+      When the server matches two players, it sends each player the
+      other's IP address. It also selects one of the players at random
+      to start a handshake with the other player. The player who is
+      chosen's machine will send a SYN request packet to
+      the other player's machine. The other player's machine will
+      respond with a SYN/ACK packet, and the chosen player's machine
+      will respond with an ACK packet.
+
+
+      Chosen player's machine            Other Player’s Machine
+      |  >--------------------- SYN ----------------------->  |
+      |  <--------------------SYN/ACK----------------------<  |
+      |  >----------------------ACK------------------------>  |
+      |    //----By now, both players are synchronised----//  |
+
+                Example Packet Handshaking Communication
+
+   2.5 Digital Certificate
+   
+      A digital certificate, which is an electronic document that links
+      the public key to the sender, is sent after a period of time that
+      contains the public key used to decrypt the message and digital
+      signature. This digital signature also includes the player’s
+      unique username. This digital certificate is signed by the trusted
+      Certificate Authenticity (CA) which verifies that the public key
+      actually belongs to the user that sent the move. The server gives
+      the player’s opponent’s public key to store it as a trusted CA, so
+      any certificate from the sender must match this, otherwise they
+      are not verified. This improves non-repudiation to ensure that
+      every move sent by the opponent is in fact them, and
+      not a middleman/imitation. 
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 4]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+3. Handling Dishonest Players
+
+   To handle dishonest players the game will treat all matches as if the
+   clients cannot be trusted under any circumstances. When the round
+   begins it will count from three to indicate both players when to set
+   their current move. When this timer is finished it will activate a
+   new shot clock that then gives both players a five second window to
+   place their move using the keyboard. If one of the players does not
+   press a key within this window he will get a warning for that round,
+   each player is allowed one warning before he/she will forfeit that
+   round. Next to stop the client from using its privileges to enter and
+   change confidential information of the game we will keep all logic on
+   the server side and primarily use the client as a view/display logic
+   where applicable. When the client does enter their move we will store
+   this in dynamically allocated variables which is changed upon the
+   start of each round. And finally to give non-repudiation from the
+   client it will provide its unique digital signature it gave when
+   first connecting to the system to let the server know the client is
+   not an imposter. If these rules are not upheld the client will be
+   seen as hostile and be given a warning. Multiple warnings in a short
+   period of time will get the client banned. If the client gets a total
+   amount of warnings overall they will also be banned.
+
+   3.1 Reporting Function
+
+     If  a player suspects the opposing player is using means of
+     hacking/third-party software to report false moves, the player has
+     the option to report the opposing player at the end of the match.
+     If the report tally reaches a threshold of 10 reports in a short
+     amount of time, the player will be temporarily suspended and their
+     in-game statistics (such as match history, win rate) will be
+     investigated by the support team. If their win rate is unusually
+     high (for example: 90% across over 100 games), then their IP
+     address will be banned from playing the game and the server will
+     restrict them from any matchmaking.
+
+
+4. Network Issues
+
+   This section describes network issues and disconnections during
+   gameplay. Specific reasoning is stated why certain outcomes are
+   chosen as a result of network-related issues.
+
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 5]
+
+Internet-Draft                    RPS                       03 May 2020
+
+    4.1 Disconnections
+
+      Before the player matches against an opponent, their internet
+      speed is measured to ensure it is stable enough to play the game.
+      If the speed threshold is not met and deemed slow and likely
+      disruptive, they are warned before the confirmation of
+      matchmaking. This warning will clearly state that their network
+      connection is unstable and that if they disconnect, the opposing
+      player will automatically win, while they take a loss, regardless
+      of whether or not a round has been completed.  It is the player’s
+      choice whether they wish to continue (with the risk of possibly
+      disconnecting and losing) or to resolve their internet speed
+      issue by sitting closer to the router or connecting to a
+      different network.
+
+    4.2 Disconnection Reporting
+
+      When a player disconnects from the server due to network-related
+      issues, for example: the Wi-Fi router has been disconnected, then
+      the opposing player has the option to report them. This report
+      gets sent to the central server when the game finishes and stored
+      as a tally against their IP address. If the report tally reaches a
+      certain threshold (five reports) in a short span of time, the
+      player will be given a final warning next time they enter
+      matchmaking. If this report tally reaches ten reports, then their
+      IP address will be banned for a certain period of time. This is an
+      efficient method to prevent players from purposely disconnecting
+      when losing, and gives players (who have legitimate network
+      issues) a number of chances to fix their problem before
+      encountering these consequences. Without these measures, gameplay
+      will be severely disrupted to players who have stable internet
+      speeds and may lead to repetitive encounters of players
+      disconnecting. In terms of game outcome, after a player
+      disconnects, the game result is a tie. The reason for this is
+      there is no way to tell if a player is intentionally causing
+      connection disruptions. Therefore, the only fair resolution to
+      this is to call a tie as the match outcome, regardless of which
+      player was winning.
+
+    4.3 Gameplay Internet Speed Reliance
+
+      The server and gameplay itself does not have reliance or bias
+      towards network speed. Players do not get an advantage in terms
+      of the timing, regardless of how slow/fast the player
+      sent their answer in. As long as the player sends their answer
+      within the designated time frame, there will not be any issues
+      in relation to internet speed. If a player cannot send an answer
+      within the designated time frame due to network speed, then it
+      is their responsibility to fix that issue. Without this time
+      frame, the opposing player may be waiting indefinitely for their
+      opponent’s answer due to their slow internet connection preventing
+      submission of answers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 6]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+5. Security and Authentication
+
+   5.1 Encryption
+
+      The purpose of encrypting the game data is to prevent one player
+      from cheating by seeing the other player’s move before they
+      decide their own move.  The game employs a public key encryption
+      method. When the match initialises, each player generates their
+      own private key and public key using an RSA algorithm. At the
+      beginning of the first round, each player is sent their opponent's
+      public key by their opponent. The same public key will be used for
+      the entirety of the match. Once a player has chosen a move, that
+      move is encrypted using their own private key. The encrypted move
+      is sent along with the digital signature, which is also encrypted,
+      using the sender's private key. A digital signature is a numerical
+      value that represents a sequence of characters. It does not expose
+      the player’s name or IP  in any way or form.
+
+   5.2 Hashing
+
+      A new digital signature is created for each round as the value
+      is based on encrypting the hash result of move and salt. When a
+      move is chosen, this move is hashed with a salt value. This
+      hashed move must be encrypted with a private key to create this
+      digital signature. Sending of moves between players
+      occurs simultaneously to prevent one player from decrypting their
+      opponent's move before they have made their own move. Both players
+      receive the other players' encrypted move, as well as their digital
+      signature. The original moves and digital signature sent (which was
+      encrypted) is then decrypted and hashed using the same hash algorithm
+      and salt. If the unique hash generated by the original message is the
+      exact same as the hash value received, then the player and server
+      can confirm that the move has not been altered and the digital
+      signature is authentic. If these hashes compared are different,
+      then it reveals that the message has been tampered and the message
+      received is not what the player initially sent. Each player will have
+      their opponent's move decrypted using their opponent's public key
+      which will allow the game to calculate the results of the round for
+      the given moves that each player has made. The process is repeated
+      for each round of the match with the same public keys used
+      throughout.
+
+
+
+RFC Editor                    Informational                    [Page 7]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+   5.3 Timestamping
+
+      Timestamps are handled by the host machine. The host machine
+      maintains timestamps for the beginning of the three second
+      countdown, the start of the shot clock, and the end of the
+      shot clock. The game performs a check to ensure each player’s
+      moves were made within the 1 second shot clock.
+
+
+6. Security Considerations
+
+   All player information including their IP address is encrypted and
+   hidden from view and access from other players in the server. This
+   game has no direct effect on the Security of the Internet and does
+   not expose sensitive information of individuals in any way.
+
+7. Acknowledgements
+
+   The construction of this RFC gives many thanks to the Instructions to
+   Request for Comments (RFC) Authors document which is publicly available
+   to use and refer to. We are also thankful for the thoughtful and
+   helpful advice given by the COSC326 Effective Programming Teaching Team
+   to develop and format this RFC correctly. More specifically regards
+   to Steven Livingstone who gave useful notes and pointers before
+   finalizing and submitting this RFC.
+
+
+
+
+
+
+
+
+
+RFC Editor                    Informational                    [Page 8]
+
+Internet-Draft                    RPS                       03 May 2020
+
+
+Authors' Addresses
+
+   Department of Computer Science
+   University of Otago
+   PO Box 56
+   Dunedin 9054
+   New Zealand
+
+   Telephone: 64 3 479 8397
+   Fax: 64 3 479 8529
+   Email: computer-science@otago.ac.nz
+
+Full Copyright Statement
+
+   Copyright (C) COSC326 Group (2020).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the ISOC's procedures with respect to rights in ISOC Documents can
+   be found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at ietf-
+   ipr@ietf.org.
+
+
+RFC Editor                    Informational                    [Page 9]

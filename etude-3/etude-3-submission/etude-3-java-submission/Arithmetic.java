@@ -5,13 +5,14 @@ import java.lang.Character;
 
 public class Arithmetic {
 
-  private static int[] nums;
-  private static int depth;
-  public int target;
-  private static Boolean found = false;
-  public String finalString;
-  public static char order;
+  private static int[] nums; // The array of input numbers
+  private static int depth; // Depth of the (abstract) binary tree, or n
+  public int target; // The target value
+  private static Boolean found = false; // Boolean for found target value
+  public String finalString; // Resulting expression if valid, else 'Impossible'
+  public static char order; // Left to right, or Normal, order of operations
 
+  // Lines of input create Arithmetic objects
   Arithmetic(int[] nums, int target, char order) {
     this.nums = nums;
     this.target = target;
@@ -23,15 +24,21 @@ public class Arithmetic {
     return target;
   }
 
+  // Addition utility function
   public int add(int x, int y) {
     return x + y;
   }
 
+  // Multiplication utility function
   public int multiply(int x, int y) {
     return x * y;
   }
 
-  /** Recurses through an abstract of a binary tree while tracking the current value at each step
+  /** Recurses through an abstract of a binary tree while tracking the current
+    * value at each step.
+    * @param i current index/tree-level
+    * @param expressionString a string of the current expression
+    * @param currentValue the value given by evaluating the current expression
     */
   private void calculateLeft(int i, String expressionString, int currentValue) {
 
@@ -91,14 +98,15 @@ public class Arithmetic {
 
       String line = stdin.nextLine();
 
-      if (count % 2 == 0) {
+
+      if (count % 2 == 0) { // First line contains numbers in expression
         String[] numberString = line.split(" ");
         int i = 0;
         for (String n : numberString) {
           numsArrayList.add(Integer.parseInt(n));
         }
 
-      } else {
+      } else { // Second line contains target value and order (L/N)
 
         String[] constraints = line.split(" ");
 
@@ -139,7 +147,7 @@ public class Arithmetic {
         Arithmetic test = new Arithmetic(numSequence, target, order);
         test.found = false;
         test.finalString = order + " " + Integer.toString(target) + " " + "impossible";
-        //final long start = System.nanoTime();
+        //final long start = System.nanoTime(); // efficiency test
 
         // Execute by order argument
         if (order == 'L') {
@@ -148,9 +156,9 @@ public class Arithmetic {
           test.calculateNormal(1, 0, numSequence[0], numSequence[0], Integer.toString(numSequence[0]));
         }
 
-        //final long end = System.nanoTime();
+        //final long end = System.nanoTime(); // efficiency test
         System.out.println(test.finalString);
-        //System.out.println((end - start)/ Math.pow(10, 9));
+        //System.out.println((end - start)/ Math.pow(10, 9)); // efficiency test
       }
       count++;
     }
