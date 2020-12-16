@@ -5,7 +5,7 @@ Arithmetic
 
 This program takes in 2 lines of input. The first line being a set of numbers, the second line being a target number, and a letter N or L which determines the order of operations to apply (normal/bedmas, or left to right). The program determines whether or not the list of numbers, in the given order, can result in the target value by using only addition or multiplication in any permutation upon the numbers. If it is possible, the output will return the order letter, the target number, and the expression that evaluates to the target number.
 
-Written in Java  
+This program was originally written in Python, but due to inefficient performance, was rewritten in Java.  
 
 Compile using the command:  
 javac Arithmetic.java  
