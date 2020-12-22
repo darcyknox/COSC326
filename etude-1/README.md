@@ -83,5 +83,5 @@ mail@domdotcom
 
 Resources used:
 
-regex101.com
+regex101.com  
 www.regular-expressions.info
